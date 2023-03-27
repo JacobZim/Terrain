@@ -3,6 +3,7 @@
 #include "Maze.h"
 #include "Rat.h"
 #include "HelperFunctions.h"
+#include "graphics.h"
 
 
 Rat::Rat(double x, double y, double degrees) {
@@ -11,7 +12,7 @@ Rat::Rat(double x, double y, double degrees) {
 	mDegrees = degrees;
 }
 
-void Rat::Scurry( Maze & m, double DT, bool backwards ) {
+void Rat::Scurry(double DT, bool backwards ) {
 	double radians = mDegrees / 180 * 3.14;// / 15926;
 	if (backwards == true) {
 		radians += 3.14;
@@ -22,15 +23,31 @@ void Rat::Scurry( Maze & m, double DT, bool backwards ) {
 	double newX = mX + dx;
 	double newY = mY + dy;
 
-	if (m.IsSafe(newX, newY, ratsRadius)) {
+
+	if (IsSafe(newX, newY)) {
 		mX = newX;
 		mY = newY;
 	}
-	else if (m.IsSafe(mX, newY, ratsRadius)) {
+	else if (IsSafe(mX, newY)) {
 		mY = newY;
 	}
-	else if (m.IsSafe(newX, mY, ratsRadius)) {
+	else if (IsSafe(newX, mY)) {
 		mX = newX;
+	}
+	if (getTerrainHeight(mX, mY) < gWaterHeight) {
+		mZ = gWaterHeight + gFloatHeight;
+	}
+	else {
+		mZ = getTerrainHeight(mX, mY) + gFloatHeight;
+	}
+}
+
+bool Rat::IsSafe(double newX, double newY) {
+	if (newX > 0 && newX < 101 && newY > 0 && newY < 101) {
+		return true;
+	}
+	else {
+		return false;
 	}
 }
 
@@ -84,9 +101,10 @@ void Rat::SpinRight(double DT) {
 	}
 }
 
-void Rat::SetPosition(double x, double y, double deg) {
+void Rat::SetPosition(double x, double y, double z, double deg) {
 	SetX(x);
 	SetY(y);
+	SetZ(z);
 	SetDegrees(deg);
 }
 
@@ -94,7 +112,7 @@ void Rat::SetPosition(double x, double y, double deg) {
 void Rat::Draw() {
 	
 	glPushMatrix();
-	glTranslated(mX, mY, 0);
+	glTranslated(mX, mY, mZ);
 	glRotated(mDegrees, 0, 0, 1);
 	//DrawTriangle(.3, 0, -.2, -.2, -.2, .2);
 	

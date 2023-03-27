@@ -30,13 +30,15 @@ double screen_y = 500;
 
 viewtype current_view = top_view;
 
-Maze gMaze;
+//Maze gMaze;
 Rat gRat;
 bool gMoveForward = false;
 bool gMoveBackwards = false;
 bool gTurnRight = false;
 bool gTurnLeft = false;
 double gSpeed = .001;
+double gWaterHeight = .25;
+double gFloatHeight = .25;
 
 // global types and variable:
 
@@ -67,23 +69,24 @@ void display(void)
 	{
 		glEnable(GL_DEPTH_TEST);
 		glLoadIdentity();
-		double z_level = .25; //rat.GetZ(x,y);
+		double z_level = gRat.GetZ() +.1; //rat.GetZ(x,y);
 		double x = gRat.GetX();
 		double y = gRat.GetY();
 		double dx = gRat.GetDX(GetDeltaTime()); //2*rat.GetDXUnscaled()
 		double dy = gRat.GetDY(GetDeltaTime()); //2*rat.GetDYUnscaled()
 		double at_x = x + dx;
 		double at_y = y + dy;
+		//double at_z = getTerrainHeight(at_x, at_y);// +gFloatHeight;
 		//float z2 = rat.GetZ(at_x, at_y);
-		//float downward_tilt = .30;
-		double at_z = z_level; //z2 - downward_tilt
+		float downward_tilt = .001;
+		double at_z = z_level -downward_tilt;
 		gluLookAt(x, y, z_level, at_x, at_y, at_z, 0, 0, 1);
 	}
 
 	if (gMoveForward) {
-		gRat.Scurry(gMaze, GetDeltaTime());
+		gRat.Scurry(GetDeltaTime());
 	}
-	if (gMoveBackwards) gRat.Scurry(gMaze, GetDeltaTime(), true);
+	if (gMoveBackwards) gRat.Scurry(GetDeltaTime(), true);
 	if (gTurnLeft) gRat.SpinLeft(GetDeltaTime());
 	else if (gTurnRight) gRat.SpinRight(GetDeltaTime());
 	// Test lines that draw all three shapes and some text.
@@ -96,7 +99,8 @@ void display(void)
 	
 
 	glColor3d(0,0,0);
-	gMaze.Draw();
+	DrawMap();
+	
 	gRat.Draw();
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -289,8 +293,7 @@ void mouse(int mouse_button, int state, int x, int y)
 void InitializeMyStuff()
 {
 	srand(time(0));
-	gMaze.Initialize();
-	gRat.SetPosition(gMaze.GetStartX() + 0.5, 0.5, 0);
+	gRat.SetPosition(10, 10, getTerrainHeight(10, 10) + gFloatHeight, 0);
 
 }
 
@@ -352,19 +355,35 @@ void DrawMap() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glColor4d(0.1, 0.2, 0.9, 0.8);
+	int R = 10;
+	int G = 30;
+	int B = 200;
+	glColor3ub(R, G, B);
+	glBegin(GL_QUADS);
+	glVertex3d(0, 0, 0.25);
+	glVertex3d(0, 101, 0.25);
+	glVertex3d(101, 101, 0.25);
+	glVertex3d(101, 0, 0.25);
+	glEnd();
 	//Draw really big rect
+	int z;
 	for (int i = 0; i < 100; i++) {
 		for (int j = 0; j < 100; j++) {
 			unsigned char r = (unsigned char)((i * 34253 + j * 45563) % 256);
 			unsigned char g = (unsigned char)((i * 97654 + j * 36721) % 256);
 			unsigned char b = (unsigned char)((i * 67467 + j * 22345) % 256);
+			
 			glColor3ub(r, g, b);
 			glBegin(GL_QUADS);
-			glVertex3d(i, j + 1, 0);
-			glVertex3d(i + 1, j + 1, 0);
-			glVertex3d(i + 1, j + 1, 1);
-			glVertex3d(i, j + 1, 1);
+			glVertex3d(i, j, getTerrainHeight(i, j));
+			glVertex3d(i, j + 1, getTerrainHeight(i, j+1));
+			glVertex3d(i + 1, j + 1, getTerrainHeight(i+1, j+1));
+			glVertex3d(i+1, j, getTerrainHeight(i+1, j));
 			glEnd();
 		}
 	}
+}
+
+double getTerrainHeight(double x, double y) {
+	return sin(x * 0.5) + sin(y * 0.5);
 }
