@@ -114,6 +114,21 @@ void Rat::Draw() {
 	glPushMatrix();
 	glTranslated(mX, mY, mZ);
 	glRotated(mDegrees, 0, 0, 1);
+
+	double radians = GetDegrees() / 180 * 3.14;// / 15926;
+	double dx = cos(radians) * 2;
+	double dy = sin(radians) * 2;
+	/*
+	double at_x = x + dx;
+	double at_y = y + dy;
+	double at_z = getTerrainHeight(at_x, at_y);// +gFloatHeight;
+	if (at_z <= gWaterHeight) {
+		at_z = gWaterHeight + .1;
+	}
+	double difference = mZ - at_z;
+
+	glRotated()
+	*/
 	//DrawTriangle(.3, 0, -.2, -.2, -.2, .2);
 	
 	glColor3d(.7, .5, .2);

@@ -69,17 +69,25 @@ void display(void)
 	{
 		glEnable(GL_DEPTH_TEST);
 		glLoadIdentity();
-		double z_level = gRat.GetZ() +.1; //rat.GetZ(x,y);
+		double z_level = gRat.GetZ() +.5; //rat.GetZ(x,y);
 		double x = gRat.GetX();
 		double y = gRat.GetY();
-		double dx = gRat.GetDX(GetDeltaTime()); //2*rat.GetDXUnscaled()
-		double dy = gRat.GetDY(GetDeltaTime()); //2*rat.GetDYUnscaled()
+		//double dx = gRat.GetDX(GetDeltaTime()); //2*rat.GetDXUnscaled()
+		//double dy = gRat.GetDY(GetDeltaTime()); //2*rat.GetDYUnscaled()
+
+		double radians = gRat.GetDegrees() / 180 * 3.14;// / 15926;
+		double dx = cos(radians) * 2;
+		double dy = sin(radians) * 2;
+
 		double at_x = x + dx;
 		double at_y = y + dy;
-		//double at_z = getTerrainHeight(at_x, at_y);// +gFloatHeight;
+		double at_z = getTerrainHeight(at_x, at_y);// +gFloatHeight;
+		if (at_z <= gWaterHeight) {
+			at_z = gWaterHeight + .1;
+		}
 		//float z2 = rat.GetZ(at_x, at_y);
-		float downward_tilt = .001;
-		double at_z = z_level -downward_tilt;
+		//float downward_tilt = -0.1;
+		at_z = at_z;// -downward_tilt;
 		gluLookAt(x, y, z_level, at_x, at_y, at_z, 0, 0, 1);
 	}
 

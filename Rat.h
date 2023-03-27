@@ -18,6 +18,7 @@ public:
 	double GetX() { return mX; };
 	double GetY() { return mY; };
 	double GetZ() { return mZ; };
+	double GetDegrees() { return mDegrees; };
 	double GetDX(double DT);
 	double GetDY(double DT);
 	bool IsSafe(double newX, double newY);
