@@ -39,6 +39,8 @@ bool gTurnLeft = false;
 double gSpeed = .001;
 double gWaterHeight = .25;
 double gFloatHeight = .25;
+double gTerrainConst1 = 1.0;
+double gTerrainConst2 = 1.0;
 
 // global types and variable:
 
@@ -244,9 +246,6 @@ void keyboard(unsigned char c, int x, int y)
 	case 'd':
 		gTurnRight = true;
 		break;
-	case 'b':
-		// do something when 'b' character is hit.
-		break;
 	case 'r':
 		current_view = rat_view;
 		SetRatView(screen_x, screen_y);
@@ -258,6 +257,18 @@ void keyboard(unsigned char c, int x, int y)
 	case 't':
 		current_view = top_view;
 		SetTopView(screen_x, screen_y);
+		break;
+	case '1':
+		increaseRuggedness();
+		break;
+	case '2':
+		decreaseRuggedness();
+		break;
+	case '3':
+		raiseWaterLevel();
+		break;
+	case '4':
+		lowerWaterLevel();
 		break;
 	default:
 		return; // if we don't care, return without glutPostRedisplay()
@@ -354,11 +365,6 @@ void AdjustWaterHeight(double t) {
 }*/
 
 void DrawMap() {
-
-
-
-
-
 	//Draw Water
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -368,10 +374,10 @@ void DrawMap() {
 	int B = 200;
 	glColor3ub(R, G, B);
 	glBegin(GL_QUADS);
-	glVertex3d(0, 0, 0.25);
-	glVertex3d(0, 101, 0.25);
-	glVertex3d(101, 101, 0.25);
-	glVertex3d(101, 0, 0.25);
+	glVertex3d(0, 0, gWaterHeight);
+	glVertex3d(0, 101, gWaterHeight);
+	glVertex3d(101, 101, gWaterHeight);
+	glVertex3d(101, 0, gWaterHeight);
 	glEnd();
 	//Draw really big rect
 	int z;
@@ -393,5 +399,21 @@ void DrawMap() {
 }
 
 double getTerrainHeight(double x, double y) {
-	return sin(x * 0.5) + sin(y * 0.5);
+	return gTerrainConst1 * sin(x * 0.5) + gTerrainConst2 * sin(y * 0.5);
 }
+
+void increaseRuggedness() {
+	gTerrainConst1 += .1;
+	gTerrainConst2 += .2;
+}
+void decreaseRuggedness() {
+	gTerrainConst1 -= .1;
+	gTerrainConst2 -= .2;
+}
+void raiseWaterLevel() {
+	gWaterHeight += 0.05;
+}
+void lowerWaterLevel() {
+	gWaterHeight -= 0.05;
+}
+

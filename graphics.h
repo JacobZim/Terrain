@@ -2,6 +2,10 @@
 
 void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3);
 void DrawMap();
+void increaseRuggedness();
+void decreaseRuggedness();
+void raiseWaterLevel();
+void lowerWaterLevel();
 double getTerrainHeight(double x, double y);
 extern double gWaterHeight;
 extern double gFloatHeight;
