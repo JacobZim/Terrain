@@ -60,7 +60,7 @@ void display(void)
 	{
 		glEnable(GL_DEPTH_TEST);
 		glLoadIdentity();
-		gluLookAt(-3, -3, 12, 4.5, 4, 0, 0, 0, 1);
+		gluLookAt(-6, -6, 50, 40, 40, 0, 0, 0, 1);
 	}	//camera position, point looking at, tilt
 	else if (current_view == top_view)
 	{
@@ -155,8 +155,8 @@ void SetTopView(int w, int h)
 	glLoadIdentity();
 	double world_margin_x = 0.5;
 	double world_margin_y = 0.5;
-	gluOrtho2D(-world_margin_x, M + world_margin_x,
-		-world_margin_y, N + world_margin_y);
+	gluOrtho2D(-world_margin_x, 100 + world_margin_x,
+		-world_margin_y, 100 + world_margin_y);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -168,7 +168,7 @@ void SetPerspectiveView(int w, int h)
 	gluPerspective(
 		/* field of view in degree */ 38.0,
 		/* aspect ratio */ aspectRatio,
-		/* Z near */ .1, /* Z far */ 30.0);
+		/* Z near */ .1, /* Z far */ 200.0);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -180,7 +180,7 @@ void SetRatView(int w, int h)
 	gluPerspective(
 		/* field of view in degree */ 38.0,
 		/* aspect ratio */ aspectRatio,
-		/* Z near */ 0.1, /* Z far */ 30.0);
+		/* Z near */ 0.1, /* Z far */ 50.0);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -311,8 +311,9 @@ void mouse(int mouse_button, int state, int x, int y)
 // Your initialization code goes here.
 void InitializeMyStuff()
 {
+	int startx = 50, starty = 50;
 	srand(time(0));
-	gRat.SetPosition(10, 10, getTerrainHeight(10, 10) + gFloatHeight, 0);
+	gRat.SetPosition(startx, starty, getTerrainHeight(startx, starty) + gFloatHeight, 0);
 
 }
 
@@ -383,7 +384,7 @@ void DrawMap() {
 	int z;
 	for (int i = 0; i < 100; i++) {
 		for (int j = 0; j < 100; j++) {
-			unsigned char r = (unsigned char)((i * 34253 + j * 45563) % 256);
+			unsigned char r = (unsigned char)((i * 34243 + j * 45543) % 256);
 			unsigned char g = (unsigned char)((i * 97654 + j * 36721) % 256);
 			unsigned char b = (unsigned char)((i * 67467 + j * 22345) % 256);
 			
@@ -399,7 +400,7 @@ void DrawMap() {
 }
 
 double getTerrainHeight(double x, double y) {
-	return gTerrainConst1 * sin(x * 0.5) + gTerrainConst2 * sin(y * 0.5);
+	return gTerrainConst1 * sin(x * 0.5) + gTerrainConst2 * sin(y * 0.5) + 4 * sin(y * .2) + 3 * cos(x * .3);
 }
 
 void increaseRuggedness() {
@@ -416,4 +417,3 @@ void raiseWaterLevel() {
 void lowerWaterLevel() {
 	gWaterHeight -= 0.05;
 }
-
